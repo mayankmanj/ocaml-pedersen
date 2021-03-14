@@ -1,4 +1,4 @@
 (executable
  (public_name pedersen)
  (name main)
- (libraries pedersen base))
+ (libraries pedersen))
