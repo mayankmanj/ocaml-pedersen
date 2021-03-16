@@ -1,3 +1,7 @@
+
+(* Literal translation of reference blake2s implementation from
+   https://github.com/BLAKE2/BLAKE2 *)
+
 open Stdint
 
 
@@ -134,7 +138,7 @@ let g_ r i v a b c d m =
   v.(c) <- v.(c) + v.(d);
   v.(b) <- rotate_right (logxor v.(b) v.(c)) 7 [@@inline]
 
-let round r v m = 
+let round r v m =
   g_ r 0 v 0 4 8 12 m;
   g_ r 1 v 1 5 9 13 m;
   g_ r 2 v 2 6 10 14 m;
