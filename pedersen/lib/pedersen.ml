@@ -36,7 +36,7 @@ let getchunk b =
     None
   else
   let acc = ref 0 in
-  for i = 0 to 2 do
+  for _ = 0 to 2 do
     acc := !acc * 2;
     try
       if getbit b then

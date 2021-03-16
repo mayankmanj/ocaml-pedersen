@@ -1,3 +1,5 @@
 (library
  (name pedersen)
- (libraries zarith ff))
+  (wrapped false)
+ (libraries ff stdint zarith))
+

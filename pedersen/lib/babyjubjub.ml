@@ -119,7 +119,6 @@ let add_p (a : Point.t) (b : Point.t) = affine (Projective.add (projective a) (p
 let double_p (a : Point.t) = affine (Projective.double (projective a))
 
 let mul_scalar (a : Point.t) (c : Fr.t) =
-  let open Fr in
   let rec mul_helper a c (acc : Point.t) =
     if Z.equal c Z.zero then acc else
       let new_a = double_p a in
