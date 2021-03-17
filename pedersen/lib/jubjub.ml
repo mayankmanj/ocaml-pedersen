@@ -118,3 +118,54 @@ let mul_scalar (a : Point.t) (c : Fr.t) =
       else
         mul_helper new_a new_c (add_p acc a) in
  mul_helper a (Fr.to_z c) {x=Fr.zero; y=Fr.one}
+
+let repr ({x=u; y=v} : Point.t) =
+  let u' = (Z.to_int Fr.(to_z u) mod 2) * 128 in
+  let buffer = Bytes.make 32 '\000' in
+  let v_z = ref (Fr.to_z v) in
+  for i = 0 to 31 do
+    let byte = (Z.to_int Z.(logand !v_z (of_int 255))) in
+    begin
+      match i with
+      | 31 -> Bytes.set buffer i (char_of_int (byte + u'))
+      | _  -> Bytes.set buffer i (char_of_int byte)
+    end;
+    v_z := Z.shift_right !v_z 8;
+  done;
+  buffer
+
+let abst buf : Point.t option =
+  let last_byte = int_of_char (Bytes.get buf 31) in
+  let u' = last_byte / 128 in
+  let v_last = last_byte - u' * 128 in
+  let v = Bytes.sub buf 0 32 in
+  Bytes.set v 31 (char_of_int v_last);
+  let v_val = ref Z.zero in
+  let mult = ref Z.one in
+  for i = 0 to 31 do
+    let byte = Z.of_int (int_of_char (Bytes.get v i)) in
+    v_val := Z.(!v_val + !mult * byte);
+    mult := Z.(!mult * (of_int 256));
+  done;
+  if Z.(gt !v_val r) then None
+  else
+    let v = Fr.of_z !v_val in
+    if Fr.is_zero Fr.(a + (-) d * v * v) then None
+    else
+      let u2 = Fr.((one + (-) v * v) / (a + (-) d * v * v)) in
+      let u = Fr.sqrt_opt u2 in
+      match u with
+      | None -> None
+      | Some u -> if Z.of_int u' = Z.(logand (Fr.to_z u) one) then
+          Some {x=u; y=v}
+        else
+            Some {x= Fr.(-) u; y=v}
+
+let extract ({x; _} : Point.t) =
+  let out = Bytes.make 32 '\000' in
+  let z_of_x = ref (Fr.to_z x) in
+  for i = 0 to 31 do
+    Bytes.set out i (char_of_int Z.(to_int (logand !z_of_x (of_int 255))));
+    z_of_x := Z.shift_right !z_of_x 8;
+  done;
+  out

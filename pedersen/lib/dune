@@ -1,5 +1,5 @@
 (library
  (name pedersen)
   (wrapped false)
- (libraries ff stdint zarith))
+ (libraries ff stdint zarith hex))
 

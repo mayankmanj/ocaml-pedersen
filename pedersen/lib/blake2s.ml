@@ -238,7 +238,7 @@ let final s out outlen =
   Bytes.blit buffer 0 out 0 outlen;
   Bytes.fill buffer 0 outbytes '\000'  (* securly clear bytes *)
 
-let blake2s ?(key=Bytes.empty) inp outlen =
+let blake2s ?(key=Bytes.empty) ?(outlen=outbytes) inp =
   (* verify parameters *)
   let inlen = Bytes.length inp in
   let keylen = Bytes.length key in

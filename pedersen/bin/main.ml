@@ -1,9 +1,9 @@
 
-open Blake2s
+open Pedersen
 
 let input = "Hello World"
 
-let hash = blake2s (Bytes.of_string input) 32
+let hash = pedersenhash (Bytes.of_string input)
 
 let get_printable (ch : char) = Printf.sprintf "%02x" (int_of_char ch)
 
